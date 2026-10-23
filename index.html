@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sandra Crochet: prendas y accesorios de crochet artesanal para bebés, hechos a mano con dedicación y cariño en Uruguay.">
+  <meta name="theme-color" content="#fbf6ef">
+  <title>Sandra Crochet | Crochet artesanal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header" id="inicio">
+    <div class="container nav-wrap">
+      <a class="brand" href="#inicio" aria-label="Sandra Crochet, inicio">
+        <span class="brand-mark" aria-hidden="true">SC</span>
+        <span><strong>Sandra Crochet</strong><small>Crochet artesanal</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+      <nav id="menu-principal" class="main-nav" aria-label="Navegación principal">
+        <a href="#productos">Productos</a><a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-shape hero-shape-one" aria-hidden="true"></div><div class="hero-shape hero-shape-two" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Tejido a mano en Uruguay</p>
+          <h1 id="hero-title">Pequeñas creaciones,<br><em>hechas con mucho amor</em></h1>
+          <p class="hero-text">Piezas únicas de crochet para acompañar los primeros momentos de cada bebé, creadas con paciencia, suavidad y dedicación.</p>
+          <a class="btn btn-primary" href="#productos">Descubrir productos <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero-art reveal" aria-label="Ilustración decorativa de ovillos de lana y una pieza de crochet">
+          <div class="arch-card">
+            <div class="stitch-cloud cloud-one"></div><div class="stitch-cloud cloud-two"></div>
+            <div class="baby-bootie" aria-hidden="true"><span class="bootie-cuff"></span><span class="bootie-body"></span><span class="bootie-sole"></span></div>
+            <div class="yarn-ball yarn-one" aria-hidden="true"></div><div class="yarn-ball yarn-two" aria-hidden="true"></div>
+            <span class="handmade-note">hecho a mano</span>
+          </div>
+        </div>
+      </div>
+      <div class="scallop" aria-hidden="true"></div>
+    </section>
+
+    <section class="products section" id="productos" aria-labelledby="products-title">
+      <div class="container">
+        <div class="section-heading reveal"><div><p class="eyebrow">Catálogo</p><h2 id="products-title">Creaciones recientes</h2></div><p>Cada pieza es especial y puede consultarse directamente con Sandra.</p></div>
+        <div id="catalog-status" class="status-box" role="status"><span class="spinner" aria-hidden="true"></span><span>Cargando creaciones…</span></div>
+        <div id="product-grid" class="product-grid" aria-live="polite"></div>
+        <div class="center"><button id="load-more" class="btn btn-outline hidden" type="button">Ver más productos</button></div>
+      </div>
+    </section>
+
+    <section class="about section hidden" id="nosotros" aria-labelledby="about-title" aria-hidden="true">
+      <div class="container about-grid">
+        <div class="about-art reveal" aria-hidden="true"><div class="fiber-ring"><span>♥</span></div><p>puntada a puntada</p></div>
+        <div class="about-copy reveal"><p class="eyebrow">Sobre Sandra Crochet</p><h2 id="about-title">Cada detalle cuenta una historia</h2><p>Sandra realiza productos de crochet artesanal para bebés, hechos a mano con dedicación y cariño. Cada creación nace puntada a puntada, cuidando los detalles para ofrecer una pieza especial.</p><p class="signature">Con cariño, Sandra</p></div>
+      </div>
+    </section>
+
+    <section class="contact section" id="contacto" aria-labelledby="contact-title">
+      <div class="container contact-card reveal"><div><p class="eyebrow">¿Te gustó una creación?</p><h2 id="contact-title">Conversemos sobre esa pieza especial</h2><p>Escribime para consultar disponibilidad, colores y detalles.</p></div><a class="btn btn-whatsapp" href="https://wa.me/59894333518?text=Hola%20Sandra%2C%20quisiera%20hacerte%20una%20consulta%20sobre%20tus%20productos%20de%20crochet." target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✆</span> Escribir por WhatsApp</a></div>
+    </section>
+
+    <section id="admin-panel" class="admin-panel hidden" aria-labelledby="admin-title">
+      <div class="container admin-shell">
+        <div class="admin-header"><div><p class="eyebrow">Área privada</p><h2 id="admin-title">Administrar productos</h2></div><button id="close-admin" class="icon-button" type="button" aria-label="Cerrar panel">×</button></div>
+        <div id="admin-message" class="message hidden" role="alert"></div>
+        <form id="login-form" class="admin-form" novalidate>
+          <div class="form-intro"><h3>Hola, Sandra</h3><p>Ingresá tus datos para administrar el catálogo.</p></div>
+          <label for="username">Usuario</label><input id="username" name="username" type="text" autocomplete="username" required placeholder="sandra">
+          <label for="password">Contraseña</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+          <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+        </form>
+        <div id="admin-dashboard" class="hidden">
+          <div class="dashboard-actions"><p>Sesión iniciada como <strong>Sandra</strong></p><button id="logout-button" class="text-button" type="button">Cerrar sesión</button></div>
+          <form id="product-form" class="product-form" novalidate>
+            <h3>Publicar una nueva creación</h3>
+            <label for="product-title">Título del producto (opcional)</label><input id="product-title" name="title" type="text" maxlength="100" placeholder="Ej.: Escarpines color rosa">
+            <label for="product-image">Fotografía</label>
+            <div class="file-drop"><input id="product-image" name="image" type="file" accept="image/jpeg,image/png,image/webp" required><span>Elegir una foto</span><small>JPG, PNG o WebP · máximo 8 MB</small></div>
+            <div id="image-preview-wrap" class="image-preview hidden"><img id="image-preview" alt="Vista previa del producto"><button id="remove-preview" type="button" class="icon-button" aria-label="Quitar fotografía">×</button></div>
+            <button id="publish-button" class="btn btn-primary" type="submit">Publicar producto</button>
+          </form>
+          <div class="admin-products"><h3>Productos publicados</h3><div id="admin-product-list" class="admin-product-list"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-grid"><div><button id="secret-admin-trigger" class="footer-brand" type="button" aria-label="Sandra Crochet">Sandra Crochet</button><p>Crochet artesanal</p></div><p>© <span id="current-year"></span> Sandra Crochet. Todos los derechos reservados.</p><button id="admin-access" class="admin-access" type="button">Administración</button></div></footer>
+  <a class="floating-whatsapp" href="https://wa.me/59894333518?text=Hola%20Sandra%2C%20quisiera%20hacerte%20una%20consulta." target="_blank" rel="noopener noreferrer" aria-label="Consultar por WhatsApp">✆</a>
+
+  <dialog id="image-modal" class="image-modal"><button id="close-modal" class="modal-close" type="button" aria-label="Cerrar imagen">×</button><img id="modal-image" alt=""><p id="modal-caption"></p></dialog>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
