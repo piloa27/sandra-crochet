@@ -1,7 +1,8 @@
 import { supabaseClient, isConfigured, SUPABASE_CONFIG } from './supabase.js';
+import { compressImage } from './image-processing.js';
+import { createPhotoEditor } from './photo-editor.js';
 
 let refreshProducts = async () => {};
-let previewUrl = null;
 const panel = document.querySelector('#admin-panel');
 const loginForm = document.querySelector('#login-form');
 const dashboard = document.querySelector('#admin-dashboard');
@@ -24,21 +25,14 @@ async function updateAuthUI() {
   if (session && !isAdmin) { await supabaseClient.auth.signOut(); showMessage('Esta cuenta no tiene permisos de administración.', true); }
 }
 
-async function compressImage(file) {
-  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) throw new Error('Elegí una imagen JPG, PNG o WebP.');
-  if (file.size > 8 * 1024 * 1024) throw new Error('La imagen supera el máximo de 8 MB.');
-  const bitmap = await createImageBitmap(file); const maxSide = 1600; const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement('canvas'); canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close();
-  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', .82));
-  if (!blob) throw new Error('No se pudo preparar la fotografía.'); return blob;
-}
-
-function resetPreview() { if (previewUrl) URL.revokeObjectURL(previewUrl); previewUrl = null; productForm.elements.image.value = ''; document.querySelector('#image-preview-wrap').classList.add('hidden'); document.querySelector('#image-preview').removeAttribute('src'); }
+const photoEditor = createPhotoEditor({
+  form: productForm,
+  onBusy: busy => { document.querySelector('#publish-button').disabled = busy; }
+});
 
 export function renderAdminProducts(products = []) {
   if (!list) return;
-  list.innerHTML = products.length ? products.map((product) => { const title = product.titulo?.trim() || 'Sin título'; return `<div class="admin-product-row"><img src="${escapeHtml(product.imagen_url)}" alt=""><strong>${escapeHtml(title)}</strong><button class="delete-button" type="button" data-delete-id="${escapeHtml(product.id)}" data-delete-path="${escapeHtml(product.imagen_path || '')}" data-delete-title="${escapeHtml(title)}">Eliminar</button></div>`; }).join('') : '<p>Todavía no hay productos publicados.</p>';
+  list.innerHTML = products.length ? products.map((product) => { const title = product.titulo?.trim() || 'Sin título'; return `<div class="admin-product-row"><img src="${escapeHtml(product.imagen_url)}" alt="" loading="lazy" width="66" height="66"><strong>${escapeHtml(title)}</strong><button class="delete-button" type="button" data-delete-id="${escapeHtml(product.id)}" data-delete-path="${escapeHtml(product.imagen_path || '')}" data-delete-title="${escapeHtml(title)}">Eliminar</button></div>`; }).join('') : '<p>Todavía no hay productos publicados.</p>';
 }
 
 export function initAdmin({ onProductsChanged }) {
@@ -63,21 +57,20 @@ loginForm.addEventListener('submit', async (event) => {
 });
 
 document.querySelector('#logout-button').addEventListener('click', async () => { await supabaseClient?.auth.signOut(); showMessage('Sesión cerrada correctamente.'); await updateAuthUI(); });
-productForm.elements.image.addEventListener('change', () => { const file = productForm.elements.image.files[0]; resetPreview(); if (!file) return; productForm.elements.image.files = new DataTransfer().files; const transfer = new DataTransfer(); transfer.items.add(file); productForm.elements.image.files = transfer.files; previewUrl = URL.createObjectURL(file); document.querySelector('#image-preview').src = previewUrl; document.querySelector('#image-preview-wrap').classList.remove('hidden'); });
-document.querySelector('#remove-preview').addEventListener('click', resetPreview);
 
 productForm.addEventListener('submit', async (event) => {
-  event.preventDefault(); clearMessage(); const title = productForm.elements.title.value.trim(); const file = productForm.elements.image.files[0]; const button = document.querySelector('#publish-button');
+  event.preventDefault(); clearMessage(); const title = productForm.elements.title.value.trim(); const file = photoEditor.getSelectedFile(); const button = document.querySelector('#publish-button');
+  if (button.disabled) return;
   if (!file) return showMessage('Elegí una fotografía para publicar.', true);
-  setBusy(button, true, 'Publicando…'); let path = null;
+  setBusy(button, true, 'Publicando…'); photoEditor.setUploading(true); let path = null;
   try {
-    const blob = await compressImage(file); path = `${crypto.randomUUID()}.webp`;
-    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(path, blob, { contentType: 'image/webp', upsert: false }); if (uploadError) throw uploadError;
+    const blob = await compressImage(file); path = `${crypto.randomUUID()}.${blob.type === 'image/png' ? 'png' : 'webp'}`;
+    const { error: uploadError } = await supabaseClient.storage.from('productos').upload(path, blob, { contentType: blob.type, upsert: false }); if (uploadError) throw uploadError;
     const { data: publicData } = supabaseClient.storage.from('productos').getPublicUrl(path);
     const { error: insertError } = await supabaseClient.from('productos').insert({ titulo: title || null, imagen_url: publicData.publicUrl, imagen_path: path }); if (insertError) throw insertError;
-    productForm.reset(); resetPreview(); showMessage('¡Producto publicado correctamente!'); await refreshProducts();
+    productForm.reset(); photoEditor.reset(); showMessage('¡Producto publicado correctamente!'); await refreshProducts();
   } catch (error) { console.error(error); if (path) await supabaseClient.storage.from('productos').remove([path]); showMessage(`No se pudo publicar: ${error.message || 'intentá nuevamente.'}`, true); }
-  finally { setBusy(button, false); }
+  finally { photoEditor.setUploading(false); setBusy(button, false); }
 });
 
 list.addEventListener('click', async (event) => {
